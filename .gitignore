@@ -172,3 +172,22 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+
+#secrets
+secrets/
+
+# Data files (they are large and should not be in Git)
+data/*.csv
+data/*.zip
+data/monthly_trips/
+data/extracted_temp/
+
+
+# Ignore everything inside output/ by default
+output/*
+
+# But keep the .avsc and .java schema files
+!output/*.avsc
+!output/*.java
+!output/.gitkeep

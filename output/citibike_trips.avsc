@@ -1,0 +1,85 @@
+{
+  "type" : "record",
+  "name" : "citibike_trips",
+  "doc" : "Sqoop import of citibike_trips",
+  "fields" : [ {
+    "name" : "ride_id",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "ride_id",
+    "sqlType" : "12"
+  }, {
+    "name" : "rideable_type",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "rideable_type",
+    "sqlType" : "12"
+  }, {
+    "name" : "started_at",
+    "type" : [ "null", "long" ],
+    "default" : null,
+    "columnName" : "started_at",
+    "sqlType" : "93"
+  }, {
+    "name" : "ended_at",
+    "type" : [ "null", "long" ],
+    "default" : null,
+    "columnName" : "ended_at",
+    "sqlType" : "93"
+  }, {
+    "name" : "start_station_name",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "start_station_name",
+    "sqlType" : "12"
+  }, {
+    "name" : "start_station_id",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "start_station_id",
+    "sqlType" : "12"
+  }, {
+    "name" : "end_station_name",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "end_station_name",
+    "sqlType" : "12"
+  }, {
+    "name" : "end_station_id",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "end_station_id",
+    "sqlType" : "12"
+  }, {
+    "name" : "start_lat",
+    "type" : [ "null", "double" ],
+    "default" : null,
+    "columnName" : "start_lat",
+    "sqlType" : "8"
+  }, {
+    "name" : "start_lng",
+    "type" : [ "null", "double" ],
+    "default" : null,
+    "columnName" : "start_lng",
+    "sqlType" : "8"
+  }, {
+    "name" : "end_lat",
+    "type" : [ "null", "double" ],
+    "default" : null,
+    "columnName" : "end_lat",
+    "sqlType" : "8"
+  }, {
+    "name" : "end_lng",
+    "type" : [ "null", "double" ],
+    "default" : null,
+    "columnName" : "end_lng",
+    "sqlType" : "8"
+  }, {
+    "name" : "member_casual",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "member_casual",
+    "sqlType" : "12"
+  } ],
+  "tableName" : "citibike_trips"
+}
