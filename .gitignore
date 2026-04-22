@@ -190,4 +190,5 @@ output/*
 # But keep the .avsc and .java schema files
 !output/*.avsc
 !output/*.java
+!output/q*.csv
 !output/.gitkeep
