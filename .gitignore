@@ -198,6 +198,15 @@ output/*
 !output/charts/*.png
 !output/stage2_eda_report.md
 
+# Stage 3 ML outputs
+!output/train_sample.csv
+!output/test_sample.csv
+!output/model*_predictions.csv
+!output/evaluation.csv
+!output/model_comparison.csv
+!output/best_model.txt
+!output/sample_prediction.csv
+
 # Local planning notes (not part of the deliverable)
 stage_3_plan.md
 stage_3_implementation_plan.md
