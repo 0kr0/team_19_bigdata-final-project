@@ -175,11 +175,16 @@ INSIGHTS = [
             "ordered chronologically."
         ),
         "story": (
-            "Demand follows a clear warm-weather pattern: ridership ramps up "
-            "from March through summer, peaks mid-year, and drops sharply by "
-            "December. For operations, this argues for seasonal fleet "
-            "rebalancing and surge maintenance windows in spring and autumn "
-            "rather than uniform year-round capacity."
+            "Winter months (January and February) show the lowest volume, "
+            "consistent with cold-weather behaviour, while most other months "
+            "sit close to the dataset's per-month cap of around one million "
+            "rides. Two months (June and September) stand out as much lower "
+            "than their neighbours, suggesting a sampling gap in the "
+            "underlying monthly archives rather than a real demand drop. "
+            "For operations, the cold-weather dip is the only robust signal "
+            "to plan capacity around; the June and September outliers are a "
+            "data-quality flag to investigate before drawing seasonal "
+            "conclusions."
         ),
     },
     {
