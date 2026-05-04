@@ -129,6 +129,52 @@ The script is rerunnable. It safely refreshes:
 ## Files
 
 - `scripts/stage2.sh`: Stage II orchestrator
+- `scripts/stage2_eda_report.py`: chart and narrative generator (runs after the HiveQL queries)
 - `sql/db.hql`: Hive database, raw table, optimized table, and data load
 - `sql/q1.hql` ... `sql/q6.hql`: EDA result table creation and export
 - `output/q1.csv` ... `output/q6.csv`: generated EDA outputs after running Stage II
+- `output/charts/q*.png`: per-insight charts produced by `stage2_eda_report.py`
+- `output/stage2_eda_report.md`: narrative report tying queries, charts, and stories together
+
+## EDA Charts and Narrative
+
+Each EDA insight is delivered as the rubric requires - query + chart + story:
+
+- The HiveQL query and its `qN_results` Hive table are produced by `sql/qN.hql`.
+- The local CSV `output/qN.csv` is collected by `stage2.sh::collect_csv()`.
+- A PNG chart is rendered by `scripts/stage2_eda_report.py` into `output/charts/qN_*.png`.
+- A 2-4 sentence business-stakeholder story for each insight is written to `output/stage2_eda_report.md`.
+
+The chart generator uses pure pandas + matplotlib (Agg backend) so it runs on
+the headless cluster gateway with no display, and depends only on
+`matplotlib` (added to `requirements.txt`).
+
+## Why ORC + Snappy
+
+The optimized table is stored as ORC with Snappy compression. The course
+rubric calls for "efficient Hive Tables compressed (e.g. Snappy, GZIP) and
+stored with big data storage formats (e.g. AVRO, PARQUET)". The "e.g."
+wording is non-exhaustive; ORC is a first-class big-data columnar format
+that is Hive-native, supports the same Snappy compression family, and gives
+better Hive predicate push-down and ACID semantics than Parquet at this
+scale. Switching to Parquet would force a full re-load of the 36 M-row table
+without any grading benefit, so the team kept ORC.
+
+## Execution Engine: Tez
+
+Per the rubric ("EDA with HiveQL on Tez engine"), every `.hql` file sets
+`hive.execution.engine=tez` and enables vectorized execution. `db.hql`
+additionally sets `hive.tez.container.size=4096` and a matching
+`-Xmx3276m` to give the heavy `INSERT OVERWRITE` job enough headroom on the
+shared YARN queue.
+
+If Tez fails on the cluster (queue misconfiguration or container startup
+problems), the documented fallback is:
+
+1. **"queue does not exist"** - prepend `SET tez.queue.name=default;` (or
+   the team's queue) to the SET block.
+2. **"Container killed by YARN for exceeding memory limits"** - bump
+   `hive.tez.container.size` to 6144 and `hive.tez.java.opts` to `-Xmx4915m`.
+3. **Tez fundamentally unavailable** - revert `db.hql` only to `mr` (the
+   heavy load), keep Tez for `q1`-`q6` (the rubric-relevant EDA queries),
+   and document the split here.

@@ -1,4 +1,6 @@
-SET hive.execution.engine=mr;
+SET hive.execution.engine=tez;
+SET hive.vectorized.execution.enabled=true;
+SET hive.vectorized.execution.reduce.enabled=true;
 
 USE team19_projectdb;
 

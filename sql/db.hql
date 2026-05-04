@@ -1,11 +1,16 @@
-SET hive.execution.engine=mr;
+SET hive.execution.engine=tez;
+SET hive.tez.container.size=4096;
+SET hive.tez.java.opts=-Xmx3276m;
+SET hive.auto.convert.join=true;
+SET hive.auto.convert.join.noconditionaltask.size=536870912;
 SET hive.exec.dynamic.partition=true;
 SET hive.exec.dynamic.partition.mode=nonstrict;
 SET hive.exec.max.dynamic.partitions=2000;
 SET hive.exec.max.dynamic.partitions.pernode=1000;
 SET hive.exec.max.created.files=100000;
 SET hive.enforce.bucketing=true;
-SET mapreduce.job.reduces=8;
+SET hive.vectorized.execution.enabled=true;
+SET hive.vectorized.execution.reduce.enabled=true;
 
 DROP DATABASE IF EXISTS team19_projectdb CASCADE;
 

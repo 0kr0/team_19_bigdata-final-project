@@ -192,3 +192,13 @@ output/*
 !output/*.java
 !output/q*.csv
 !output/.gitkeep
+
+# Stage 2 EDA report artefacts
+!output/charts/
+!output/charts/*.png
+!output/stage2_eda_report.md
+
+# Local planning notes (not part of the deliverable)
+stage_3_plan.md
+stage_3_implementation_plan.md
+CLAUDE.md

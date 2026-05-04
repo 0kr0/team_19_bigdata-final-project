@@ -108,4 +108,9 @@ for query_name in q1 q2 q3 q4 q5 q6; do
     collect_csv "$query_name"
 done
 
+echo ">>> Generating EDA charts and narrative report"
+mkdir -p output/charts
+python3 scripts/stage2_eda_report.py
+
 echo "=== Stage 2 is completed. CSV results are in output/q1.csv ... output/q6.csv ==="
+echo "    Charts are in output/charts/ and narrative is at output/stage2_eda_report.md"
