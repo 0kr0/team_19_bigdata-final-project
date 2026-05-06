@@ -17,20 +17,18 @@ HIVE_SITE_XML="/etc/hive/conf/hive-site.xml"
 submit_spark() {
     local script="$1"
     echo ">>> spark-submit ${script}"
-    local extra_files=()
-    if [ -f "${HIVE_SITE_XML}" ]; then
-        extra_files+=("--files" "${HIVE_SITE_XML}")
-    fi
+    local hive_conf_dir="/etc/hive/conf"
     spark-submit \
         --master yarn \
         --deploy-mode client \
         --name "team19-stage3-$(basename "${script}" .py)" \
         --conf spark.sql.catalogImplementation=hive \
+        --conf spark.driver.extraClassPath="${hive_conf_dir}" \
+        --conf spark.executor.extraClassPath="${hive_conf_dir}" \
         --conf spark.executor.memory=2g \
         --conf spark.driver.memory=1g \
         --conf spark.executor.cores=2 \
         --num-executors 2 \
-        "${extra_files[@]}" \
         "${script}"
 }
 
