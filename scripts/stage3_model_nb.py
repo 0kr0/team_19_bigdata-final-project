@@ -1,16 +1,20 @@
-"""Stage 3 model 3: Naive Bayes classifier.
+"""Stage 3 model 3: Naive Bayes classifier (Gaussian variant).
 
-Naive Bayes in Spark MLlib requires non-negative features, so the pipeline
-uses MinMaxScaler instead of StandardScaler. The grid varies modelType
-(algorithm), smoothing (model) and the MinMaxScaler.min lower bound
-(model). The earlier ChiSqSelector-based design crashed at runtime
-because Chi-square requires categorical features and our pipeline mixes
-continuous lat/lng/duration columns; MinMaxScaler.min replaced it. The
-modelType grid uses {multinomial, gaussian, complement} - bernoulli is
-deliberately excluded because Spark's Bernoulli NB rejects any feature
-value other than 0 or 1, which our continuous-after-MinMaxScaler features
-violate. complement is a multinomial variant designed for imbalanced
-classes, fitting for our ~4.7:1 member/casual ratio.
+Naive Bayes in Spark MLlib supports four modelTypes; only "gaussian" is
+robust to our pipeline's mix of continuous lat/lng/duration columns.
+"multinomial" and "complement" reject negative values, but Spark's
+MinMaxScaler can produce slightly-negative outputs when a CV validation
+fold contains values below the training fold's minimum. "bernoulli"
+requires strict {0, 1} features. Sticking to "gaussian" keeps the
+pipeline working across all 27 grid combinations.
+
+Grid (27 combinations = 3^3):
+- nb.smoothing in {0.5, 1.0, 2.0}        - algorithm hyperparameter
+                                            (Laplace smoothing).
+- scaler.min  in {0.0, 0.05, 0.1}        - model hyperparameter
+                                            (preprocessing floor).
+- scaler.max  in {0.5, 1.0, 2.0}         - model hyperparameter
+                                            (preprocessing ceiling).
 """
 import csv
 import json
@@ -71,16 +75,18 @@ def main():
     scaler = MinMaxScaler(
         inputCol="features_raw", outputCol="features",
     )
-    nb = NaiveBayes(featuresCol="features", labelCol="label")
+    nb = NaiveBayes(
+        featuresCol="features", labelCol="label", modelType="gaussian"
+    )
     pipeline = Pipeline(stages=[
         rideable_idx, rideable_ohe, station_idx, assembler, scaler, nb,
     ])
 
     grid = (
         ParamGridBuilder()
-        .addGrid(nb.modelType, ["multinomial", "gaussian", "complement"])
         .addGrid(nb.smoothing, [0.5, 1.0, 2.0])
         .addGrid(scaler.min, [0.0, 0.05, 0.1])
+        .addGrid(scaler.max, [0.5, 1.0, 2.0])
         .build()
     )
     eval_roc = BinaryClassificationEvaluator(
@@ -108,9 +114,9 @@ def main():
     best_nb = best_pipeline.stages[-1]
     best_scaler = best_pipeline.stages[-2]
     best_params = {
-        "modelType": best_nb.getOrDefault(best_nb.getParam("modelType")),
         "smoothing": best_nb.getOrDefault(best_nb.getParam("smoothing")),
         "scaler_min": best_scaler.getOrDefault(best_scaler.getParam("min")),
+        "scaler_max": best_scaler.getOrDefault(best_scaler.getParam("max")),
     }
 
     predictions = best_pipeline.transform(test)
