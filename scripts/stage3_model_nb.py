@@ -2,8 +2,11 @@
 
 Naive Bayes in Spark MLlib requires non-negative features, so the pipeline
 uses MinMaxScaler instead of StandardScaler. The grid varies modelType
-(algorithm), smoothing (model) and ChiSqSelector.numTopFeatures (model);
-27 combinations total.
+(algorithm), smoothing (model) and the MinMaxScaler.min lower bound
+(model). The earlier ChiSqSelector-based design crashed at runtime
+because Chi-square requires categorical features and our pipeline mixes
+continuous lat/lng/duration columns; MinMaxScaler.min is a clean
+substitute that keeps the count at 3 hyperparameters x 3 values.
 """
 import csv
 import json
@@ -14,7 +17,7 @@ from pyspark.sql.types import DoubleType
 from pyspark.sql.functions import udf
 from pyspark.ml import Pipeline
 from pyspark.ml.feature import (
-    StringIndexer, OneHotEncoder, VectorAssembler, MinMaxScaler, ChiSqSelector
+    StringIndexer, OneHotEncoder, VectorAssembler, MinMaxScaler
 )
 from pyspark.ml.classification import NaiveBayes
 from pyspark.ml.evaluation import BinaryClassificationEvaluator
@@ -62,23 +65,18 @@ def main():
         handleInvalid="keep",
     )
     scaler = MinMaxScaler(
-        inputCol="features_raw", outputCol="features_scaled"
-    )
-    selector = ChiSqSelector(
-        featuresCol="features_scaled", outputCol="features",
-        labelCol="label",
+        inputCol="features_raw", outputCol="features",
     )
     nb = NaiveBayes(featuresCol="features", labelCol="label")
     pipeline = Pipeline(stages=[
-        rideable_idx, rideable_ohe, station_idx, assembler, scaler,
-        selector, nb,
+        rideable_idx, rideable_ohe, station_idx, assembler, scaler, nb,
     ])
 
     grid = (
         ParamGridBuilder()
         .addGrid(nb.modelType, ["multinomial", "gaussian", "bernoulli"])
         .addGrid(nb.smoothing, [0.5, 1.0, 2.0])
-        .addGrid(selector.numTopFeatures, [5, 10, 20])
+        .addGrid(scaler.min, [0.0, 0.05, 0.1])
         .build()
     )
     eval_roc = BinaryClassificationEvaluator(
@@ -104,13 +102,11 @@ def main():
 
     best_pipeline = cv_model.bestModel
     best_nb = best_pipeline.stages[-1]
-    best_selector = best_pipeline.stages[-2]
+    best_scaler = best_pipeline.stages[-2]
     best_params = {
         "modelType": best_nb.getOrDefault(best_nb.getParam("modelType")),
         "smoothing": best_nb.getOrDefault(best_nb.getParam("smoothing")),
-        "numTopFeatures": best_selector.getOrDefault(
-            best_selector.getParam("numTopFeatures")
-        ),
+        "scaler_min": best_scaler.getOrDefault(best_scaler.getParam("min")),
     }
 
     predictions = best_pipeline.transform(test)
