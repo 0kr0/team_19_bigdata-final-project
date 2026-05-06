@@ -26,10 +26,10 @@ submit_spark() {
         --deploy-mode client \
         --name "team19-stage3-$(basename "${script}" .py)" \
         --conf spark.sql.catalogImplementation=hive \
-        --conf spark.executor.memory=4g \
-        --conf spark.driver.memory=2g \
+        --conf spark.executor.memory=2g \
+        --conf spark.driver.memory=1g \
         --conf spark.executor.cores=2 \
-        --num-executors 4 \
+        --num-executors 2 \
         "${extra_files[@]}" \
         "${script}"
 }

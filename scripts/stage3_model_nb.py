@@ -95,7 +95,7 @@ def main():
         evaluator=eval_roc,
         numFolds=3,
         seed=42,
-        parallelism=2,
+        parallelism=1,
     )
 
     started = time.time()

@@ -18,7 +18,7 @@ from pyspark.sql import SparkSession
 
 HDFS_TRAIN = "/user/team19/project/data/stage3/train"
 HDFS_TEST = "/user/team19/project/data/stage3/test"
-SAMPLE_FRACTION = float(os.environ.get("STAGE3_SAMPLE_FRACTION", "0.05"))
+SAMPLE_FRACTION = float(os.environ.get("STAGE3_SAMPLE_FRACTION", "0.02"))
 
 
 def main():
