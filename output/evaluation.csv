@@ -1,0 +1,7 @@
+model_name,metric_name,metric_value
+model1_rf,areaUnderROC,0.7345399391238677
+model1_rf,areaUnderPR,0.9209788693277873
+model2_svm,areaUnderROC,0.6440361004501053
+model2_svm,areaUnderPR,0.8795345182557921
+model3_nb,areaUnderROC,0.579318772452468
+model3_nb,areaUnderPR,0.8538089810570098

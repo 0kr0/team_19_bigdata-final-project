@@ -1,0 +1,4 @@
+model_name,area_under_roc,area_under_pr,training_time_sec,best_params_json
+model1_rf,0.7345399391238677,0.9209788693277873,2334.7585825920105,"{""numTrees"": 100, ""maxDepth"": 15, ""minInstancesPerNode"": 10}"
+model2_svm,0.6440361004501053,0.8795345182557921,565.7042310237885,"{""regParam"": 0.001, ""aggregationDepth"": 2, ""tol"": 0.0001}"
+model3_nb,0.579318772452468,0.8538089810570098,132.64511013031006,"{""smoothing"": 2.0, ""scaler_min"": 0.05, ""scaler_max"": 0.5}"

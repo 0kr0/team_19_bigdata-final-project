@@ -1,0 +1,17 @@
+feature,value
+ride_id,sample-001
+rideable_type,classic_bike
+ride_hour,18
+ride_weekday,2
+ride_month,6
+ride_duration_minutes,12.5
+start_station_id,6140.05
+start_lat,40.7421
+start_lng,-73.9942
+end_lat,40.7368
+end_lng,-73.9856
+is_weekend,0
+trip_distance_km,1.85
+model_used,model1_rf
+prediction,1.0
+raw_or_probability,"[0.13406339540956663,0.8659366045904333]"
