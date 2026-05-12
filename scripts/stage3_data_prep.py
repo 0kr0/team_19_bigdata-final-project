@@ -5,8 +5,8 @@ filters, derives feature columns (haversine trip distance, is_weekend,
 binary label), splits 70/30 with a fixed seed, and writes train/test
 parquet datasets to HDFS for the model scripts to consume.
 
-The default sample fraction (STAGE3_SAMPLE_FRACTION env var) is 0.05 -
-~500K rows out of the 10.2M total - which keeps grid search + 3-fold CV
+The default sample fraction (STAGE3_SAMPLE_FRACTION env var) is 0.02 -
+~200K rows out of the 10.2M total - which keeps grid search + 3-fold CV
 feasible on a small YARN queue while remaining statistically robust for
 AUC metrics. Override the env var to use a different fraction.
 """
